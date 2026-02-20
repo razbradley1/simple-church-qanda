@@ -4,6 +4,8 @@ A simple, mobile-first web app where people can submit questions, view the live 
 
 Built for live church Q&A moments (sermon series, panel nights, youth events, town halls).
 
+**Repo:** https://github.com/razbradley1/simple-church-qanda
+
 ## What it does
 
 - Public page for question submission
@@ -27,7 +29,7 @@ Built for live church Q&A moments (sermon series, panel nights, youth events, to
 ### 2) Import to Vercel
 
 1. Go to [https://vercel.com/new](https://vercel.com/new)
-2. Import `mccayce-questions` (or your forked copy)
+2. Import `simple-church-qanda` (or your forked copy)
 3. Keep defaults (no special framework settings needed)
 4. Click **Deploy**
 
