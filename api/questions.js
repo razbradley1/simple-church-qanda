@@ -1,19 +1,41 @@
-const DB_URL = "https://jsonblob.com/api/jsonBlob/019c7e30-b15e-7b3d-a948-9c49c13610dc";
+const PRIMARY_DB_URL = "https://jsonblob.com/api/jsonBlob/019c7e30-b15e-7b3d-a948-9c49c13610dc";
+const BACKUP_DB_URL = "https://jsonblob.com/api/jsonBlob/019c7e3f-de16-7c2a-a2b6-8ee642de7b1d";
 
-async function readAll() {
-  const res = await fetch(DB_URL, { cache: "no-store" });
+async function readFrom(url) {
+  const res = await fetch(url, { cache: "no-store" });
   if (!res.ok) throw new Error("db_read_failed");
   const data = await res.json();
   return Array.isArray(data) ? data : [];
 }
 
-async function writeAll(list) {
-  const res = await fetch(DB_URL, {
+async function writeTo(url, list) {
+  const res = await fetch(url, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(list)
   });
   if (!res.ok) throw new Error("db_write_failed");
+}
+
+async function readAll() {
+  try {
+    return await readFrom(PRIMARY_DB_URL);
+  } catch {
+    const backup = await readFrom(BACKUP_DB_URL);
+    // Best effort: heal primary if possible.
+    try { await writeTo(PRIMARY_DB_URL, backup); } catch {}
+    return backup;
+  }
+}
+
+async function writeAll(list) {
+  const results = await Promise.allSettled([
+    writeTo(PRIMARY_DB_URL, list),
+    writeTo(BACKUP_DB_URL, list)
+  ]);
+  if (results.every((r) => r.status === "rejected")) {
+    throw new Error("db_write_failed");
+  }
 }
 
 export default async function handler(req, res) {
