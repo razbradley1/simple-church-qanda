@@ -1,4 +1,4 @@
-const DB_URL = "https://jsonblob.com/api/jsonBlob/019c7901-6d34-7c98-8216-d79d24dddb0a";
+const DB_URL = "https://jsonblob.com/api/jsonBlob/019c7e30-b15e-7b3d-a948-9c49c13610dc";
 
 async function readAll() {
   const res = await fetch(DB_URL, { cache: "no-store" });
